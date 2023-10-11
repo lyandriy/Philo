@@ -1,0 +1,14 @@
+1 800 200 200 muere
+5 800 200 200 viven
+5 800 200 200 7 viven y cada uno come 7 veces
+4 410 200 200 viven
+4 310 200 100 mueren
+Esos son los casos que te pide la corrección,
+y luego habrá gente como yo que te pruebe 3 310 103 103
+(tienen que vivir) y 3 310 104 104 (tienen que morir)
+y si no te lo hace bien te lo tire
+2 610 300 300 viven
+200 610 300 300 viven
+2 601 300 300 mueren o viven
+200 600 300 300 mueren
+500 600 300 300 mueren
