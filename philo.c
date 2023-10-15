@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 18:49:44 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/11 18:55:45 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/15 20:10:02 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,33 @@ int	make_thread_join(pthread_t *thread, t_philo *philo)
 		return (0);
 	return (1);
 }
+void	check_thred(t_philo *philo)
+{
+	int	flag2 = 0;
+	while (1)
+	{
+		pthread_mutex_lock(&philo->common_structure.mutex);
+		if(philo->common_structure.death_sign == 1)
+		{
+			while(!flag2)
+			{
+				pthread_mutex_lock(&philo->common_structure.mutex_print);
+				if (philo->common_structure.print_sign == 2)
+					flag2 = 2;
+				if (philo->common_structure.print_sign == -1)
+				{
+					philo->common_structure.print_sign = 2;
+					flag2 = 1;
+				}
+				pthread_mutex_unlock(&philo->common_structure.mutex_print);
+			}
+			if (flag2 == 1)
+				printf(DEAD, philo->common_structure.time_die, (philo->common_structure.numb_philo + 1), "died");
+			break ;
+		}
+		pthread_mutex_unlock(&philo->common_structure.mutex);
+	}
+}
 
 int	make_philos(t_philo *philo)
 {
@@ -58,12 +85,16 @@ int	make_philos(t_philo *philo)
 			return (0);
 	}
 	philo->count_philo = 0;
-	get_time(&philo->birth_time);
 	while (philo->count_philo != philo->num_ph)
 	{
+		get_time(&philo->birth_time);
 		if (!make_thread(philo))
 			return (0);
 	}
+	pthread_mutex_lock(&philo->common_structure.mutex);
+	philo->common_structure.thred_sign = 1;
+	pthread_mutex_unlock(&philo->common_structure.mutex);
+	check_thred(philo);
 	while (i != philo->num_ph)
 	{
 		if (!make_thread_join(&philo->needle[i++]->thread, philo))

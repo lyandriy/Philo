@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 18:52:29 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/11 18:51:43 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/15 19:58:50 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	check_return(int retur, t_philo *philo)
 
 void	the_logs(t_needle *needle, char *str, int flag)
 {
-	if (check_dead(needle))
+	//if (check_dead(needle))
 		print(needle, str, flag);
 }
 
@@ -41,25 +41,18 @@ void	ft_usleep(uint64_t time, t_needle *needle)
 {
 	uint64_t	present_time;
 	uint64_t	time_to_sleep;
+	uint64_t	time_to_sleep_st;
 
-	get_time(&time_to_sleep);
-	present_time = 0;
-	time_to_sleep = time_to_sleep + time;
+	get_time(&present_time);
+	time_to_sleep = present_time + time;
+	time_to_sleep_st = present_time;
 	while (time_to_sleep > present_time)
 	{
-		usleep(50);
+		usleep(40);
 		get_time(&present_time);
-		if ((present_time - needle->last_meal) > needle->tt_die)
-		{
-			if (check_dead(needle))
-			{
-				pthread_mutex_lock(&needle->struct_dead->mutex);
-				needle->struct_dead->death_sign = 1;
-				pthread_mutex_unlock(&needle->struct_dead->mutex);
-				print(needle, "died awa", 0);
-			}
-		}
+		check_life(needle);
 	}
+	//printf("%lld\n", (present_time - time_to_sleep_st));
 }
 
 void	ft_destroy(t_philo *philo)
@@ -70,7 +63,7 @@ void	ft_destroy(t_philo *philo)
 	while (--philo->count_philo >= 0)
 	{
 		if (pthread_mutex_destroy(&philo->needle[philo->count_philo]->mutex))
-			printf("error de pthread_mutex_destroy\n");
+			printf("error\n");
 	}
 	while (i < philo->num_ph)
 	{
