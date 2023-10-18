@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/26 18:49:44 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/15 20:10:02 by lyandriy         ###   ########.fr       */
+/*   Created: 2023/10/16 16:19:57 by lyandriy          #+#    #+#             */
+/*   Updated: 2023/10/16 16:23:13 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	make_thread(t_philo *philo)
 	return (1);
 }
 
-int	make_thread_join(pthread_t *thread, t_philo *philo)
+int	make_join(pthread_t *thread, t_philo *philo)
 {
 	int	retur;
 
@@ -48,26 +48,18 @@ int	make_thread_join(pthread_t *thread, t_philo *philo)
 }
 void	check_thred(t_philo *philo)
 {
-	int	flag2 = 0;
 	while (1)
 	{
 		pthread_mutex_lock(&philo->common_structure.mutex);
 		if(philo->common_structure.death_sign == 1)
 		{
-			while(!flag2)
-			{
-				pthread_mutex_lock(&philo->common_structure.mutex_print);
-				if (philo->common_structure.print_sign == 2)
-					flag2 = 2;
-				if (philo->common_structure.print_sign == -1)
-				{
-					philo->common_structure.print_sign = 2;
-					flag2 = 1;
-				}
-				pthread_mutex_unlock(&philo->common_structure.mutex_print);
-			}
-			if (flag2 == 1)
-				printf(DEAD, philo->common_structure.time_die, (philo->common_structure.numb_philo + 1), "died");
+			pthread_mutex_lock(&philo->common_structure.mutex_print);
+			if (!philo->common_structure.print_sign)
+				philo->common_structure.print_sign = 1;
+			printf(DEAD, philo->common_structure.time_die,
+				(philo->common_structure.numb_philo + 1), "died");
+			pthread_mutex_unlock(&philo->common_structure.mutex_print);
+			pthread_mutex_unlock(&philo->common_structure.mutex);
 			break ;
 		}
 		pthread_mutex_unlock(&philo->common_structure.mutex);
@@ -76,9 +68,6 @@ void	check_thred(t_philo *philo)
 
 int	make_philos(t_philo *philo)
 {
-	int	i;
-
-	i = 0;
 	while (philo->count_philo != philo->num_ph)
 	{
 		if (!make_mutex(philo))
@@ -95,9 +84,10 @@ int	make_philos(t_philo *philo)
 	philo->common_structure.thred_sign = 1;
 	pthread_mutex_unlock(&philo->common_structure.mutex);
 	check_thred(philo);
-	while (i != philo->num_ph)
+	philo->count_philo = 0;
+	while (philo->count_philo != philo->num_ph)
 	{
-		if (!make_thread_join(&philo->needle[i++]->thread, philo))
+		if (!make_join(&philo->needle[philo->count_philo++]->thread, philo))
 			return (0);
 	}
 	return (1);
