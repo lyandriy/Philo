@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 18:58:23 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/18 16:44:23 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/20 17:49:24 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,23 @@ void	wait_threads(t_needle *needle)
 	}
 }
 
+int	check_number_of_meals(t_needle *needle)
+{
+	if (needle->must_eat)
+	{
+		pthread_mutex_lock(&needle->common_structure->eat);
+		if (needle->number_of_meals == needle->must_eat)
+			needle->common_structure->philosopher_eat++;
+		if (needle->common_structure->philosopher_eat == needle->num_ph)
+		{
+			pthread_mutex_unlock(&needle->common_structure->eat);
+			return (0);
+		}
+		pthread_mutex_unlock(&needle->common_structure->eat);
+	}
+	return (1);
+}
+
 void	*start_routine(void *needle_original)
 {
 	t_needle	*needle;
@@ -46,9 +63,11 @@ void	*start_routine(void *needle_original)
 	{
 		print(needle, "is thinking");
 		ft_lunch(needle);
-		if(!check_dead(needle))
+		if (!check_dead(needle))
 			break ;
 		ft_sleep(needle);
+		if (!check_number_of_meals(needle))
+			break ;
 	}
 	return (NULL);
 }

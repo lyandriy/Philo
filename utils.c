@@ -6,19 +6,11 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 18:52:29 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/18 17:48:53 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/20 17:51:45 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	get_time(uint64_t *timer)
-{
-	struct timeval	start;
-
-	gettimeofday(&start, NULL);
-	*timer = ((start.tv_sec * 1000) + (start.tv_usec / 1000));
-}
 
 int	check_return(int retur, t_philo *philo)
 {
@@ -29,25 +21,6 @@ int	check_return(int retur, t_philo *philo)
 		return (0);
 	}
 	return (1);
-}
-
-void	ft_usleep(uint64_t time, t_needle *needle)
-{
-	uint64_t	present_time;
-	uint64_t	time_to_sleep;
-	struct timeval	start;
-	
-
-	get_time(&present_time);
-	time_to_sleep = present_time + time;
-	while (time_to_sleep > present_time)
-	{
-		usleep(500);
-		gettimeofday(&start, NULL);
-		present_time = ((start.tv_sec * 1000) + (start.tv_usec / 1000));
-		if (needle->tt_die < (present_time - needle->last_meal))
-			check_life_2(needle, present_time);
-	}
 }
 
 void	ft_destroy(t_philo *philo)
@@ -68,25 +41,27 @@ void	ft_destroy(t_philo *philo)
 	free(philo->needle);
 }
 
-void	print(t_needle *needle, char *str)
+void	check_thred(t_philo *philo)
 {
-	uint64_t	timer;
-	int			flag;
-
-	flag = 0;
-	get_time(&timer);
-	timer = (timer - needle->birth_time);
-	while (!flag)
+	while (1)
 	{
-		pthread_mutex_lock(&needle->common_structure->mutex_print);
-		if (!needle->common_structure->print_sign)
+		pthread_mutex_lock(&philo->common_structure.mutex);
+		if (philo->common_structure.death_sign == 1)
 		{
-			needle->common_structure->print_sign = 1;
-			printf(DO, timer, (needle->my_number + 1), str);
-			flag = 1;
-			needle->common_structure->print_sign = 0;
+			pthread_mutex_lock(&philo->common_structure.mutex_print);
+			if (!philo->common_structure.print_sign)
+				philo->common_structure.print_sign = 1;
+			printf(DO, philo->common_structure.time_die,
+				(philo->common_structure.numb_philo + 1), "died");
+			pthread_mutex_unlock(&philo->common_structure.mutex_print);
+			pthread_mutex_unlock(&philo->common_structure.mutex);
+			break ;
 		}
-		pthread_mutex_unlock(&needle->common_structure->mutex_print);
-		usleep (50);
+		if (philo->common_structure.philosopher_eat == philo->num_ph)
+		{
+			pthread_mutex_unlock(&philo->common_structure.mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&philo->common_structure.mutex);
 	}
 }

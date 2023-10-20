@@ -6,7 +6,7 @@ SRC = main.c \
 	  checker_input.c \
 	  life_or_dead.c \
 	  lunch.c \
-	  print.c \
+	  utils_thred.c \
 
 OBJ = $(SRC:.c=.o)
 

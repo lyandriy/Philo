@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 17:40:16 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/18 17:49:37 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/20 17:48:45 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 int	check_dead(t_needle *needle)
 {
-	uint64_t	timer;
-
-	get_time(&timer);
 	pthread_mutex_lock(&needle->common_structure->mutex);
 	if (needle->common_structure->death_sign == 1)
 	{
@@ -37,7 +34,6 @@ int	check_life(t_needle *needle)
 		pthread_mutex_lock(&needle->common_structure->mutex);
 		if (needle->common_structure->death_sign == 0)
 		{
-			printf("philo %d, %lld\n", needle->my_number, (timer - needle->last_meal));
 			needle->common_structure->death_sign = 1;
 			needle->common_structure->time_die = (timer - needle->birth_time);
 			needle->common_structure->numb_philo = needle->my_number;
@@ -48,16 +44,17 @@ int	check_life(t_needle *needle)
 	return (1);
 }
 
-void	check_life_2(t_needle *needle, uint64_t present_time)
+int	check_life_2(t_needle *needle, uint64_t present_time)
 {
-
 	pthread_mutex_lock(&needle->common_structure->mutex);
 	if (needle->common_structure->death_sign == 0)
 	{
-		printf("philo %d, %lld\n", needle->my_number, (present_time - needle->last_meal));
 		needle->common_structure->death_sign = 1;
-		needle->common_structure->time_die = (present_time - needle->birth_time);
+		needle->common_structure->time_die
+			= (present_time - needle->birth_time);
 		needle->common_structure->numb_philo = needle->my_number;
+		return (0);
 	}
 	pthread_mutex_unlock(&needle->common_structure->mutex);
+	return (1);
 }

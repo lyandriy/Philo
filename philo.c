@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/16 16:19:57 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/16 16:23:13 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/20 17:47:05 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,25 +45,6 @@ int	make_join(pthread_t *thread, t_philo *philo)
 	if (!check_return(retur, philo))
 		return (0);
 	return (1);
-}
-void	check_thred(t_philo *philo)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&philo->common_structure.mutex);
-		if(philo->common_structure.death_sign == 1)
-		{
-			pthread_mutex_lock(&philo->common_structure.mutex_print);
-			if (!philo->common_structure.print_sign)
-				philo->common_structure.print_sign = 1;
-			printf(DEAD, philo->common_structure.time_die,
-				(philo->common_structure.numb_philo + 1), "died");
-			pthread_mutex_unlock(&philo->common_structure.mutex_print);
-			pthread_mutex_unlock(&philo->common_structure.mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&philo->common_structure.mutex);
-	}
 }
 
 int	make_philos(t_philo *philo)
