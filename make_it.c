@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 18:51:07 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/20 17:21:37 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/27 19:09:19 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ int	init_mutex(t_philo *philo)
 	int	retur;
 
 	retur = pthread_mutex_init(&philo->common_structure.mutex, NULL);
-	if (!check_return(retur, philo))
+	if (!check_return(retur))
 		return (0);
 	retur = pthread_mutex_init(&philo->common_structure.mutex_print, NULL);
-	if (!check_return(retur, philo))
+	if (!check_return(retur))
 		return (0);
 	retur = pthread_mutex_init(&philo->common_structure.eat, NULL);
-	if (!check_return(retur, philo))
+	if (!check_return(retur))
 		return (0);
 	return (1);
 }
@@ -56,13 +56,13 @@ int	init(t_philo *philo)
 	int	i;
 
 	i = 0;
-	if (!init_mutex(philo))
-		return (0);
 	philo->count_philo = 0;
 	philo->common_structure.print_sign = 0;
 	philo->common_structure.death_sign = 0;
 	philo->common_structure.thred_sign = 0;
 	philo->common_structure.philosopher_eat = 0;
+	if (!init_mutex(philo))
+		return (0);
 	philo->needle = (t_needle **)malloc (sizeof(t_needle *) * (philo->num_ph));
 	if (!philo->needle)
 		return (0);

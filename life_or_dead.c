@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 17:40:16 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/20 17:48:45 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/26 19:15:42 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	check_life_2(t_needle *needle, uint64_t present_time)
 		needle->common_structure->time_die
 			= (present_time - needle->birth_time);
 		needle->common_structure->numb_philo = needle->my_number;
+		pthread_mutex_unlock(&needle->common_structure->mutex);
 		return (0);
 	}
 	pthread_mutex_unlock(&needle->common_structure->mutex);

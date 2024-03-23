@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/10/22 16:50:19 by lyandriy          #+#    #+#              #
+#    Updated: 2023/10/27 20:24:37 by lyandriy         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 SRC = main.c \
 	  philo.c \
 	  utils.c \
@@ -14,11 +26,7 @@ NAME = philo
 
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -O3
-
 all: $(NAME)
-
-debug: CFLAGS += -g3 -fsanitize=thread#-fsanitize=address
-debug: re
 
 $(NAME) : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)

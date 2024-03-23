@@ -6,17 +6,16 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 18:52:29 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/20 17:51:45 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/27 20:10:33 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	check_return(int retur, t_philo *philo)
+int	check_return(int retur)
 {
 	if (retur)
 	{
-		ft_destroy(philo);
 		printf("error\n");
 		return (0);
 	}
@@ -28,17 +27,25 @@ void	ft_destroy(t_philo *philo)
 	int	i;
 
 	i = 0;
-	while (--philo->count_philo >= 0)
-	{
-		if (pthread_mutex_destroy(&philo->needle[philo->count_philo]->mutex))
-			printf("error\n");
-	}
+	if (pthread_mutex_destroy(&philo->common_structure.mutex))
+		printf("error\n");
+	if (pthread_mutex_destroy(&philo->common_structure.mutex_print))
+		printf("error\n");
+	if (pthread_mutex_destroy(&philo->common_structure.eat))
+		printf("error\n");
 	while (i < philo->num_ph)
+		pthread_mutex_destroy(&philo->needle[i++]->mutex);
+	i = 0;
+	if (philo->needle)
 	{
-		free(philo->needle[i]);
-		i++;
+		while (i < philo->count_philo)
+		{
+			if (philo->needle[i])
+				free(philo->needle[i]);
+			i++;
+		}
+		free(philo->needle);
 	}
-	free(philo->needle);
 }
 
 void	check_thred(t_philo *philo)
@@ -57,11 +64,21 @@ void	check_thred(t_philo *philo)
 			pthread_mutex_unlock(&philo->common_structure.mutex);
 			break ;
 		}
+		pthread_mutex_lock(&philo->common_structure.eat);
 		if (philo->common_structure.philosopher_eat == philo->num_ph)
 		{
+			pthread_mutex_unlock(&philo->common_structure.eat);
 			pthread_mutex_unlock(&philo->common_structure.mutex);
 			break ;
 		}
+		pthread_mutex_unlock(&philo->common_structure.eat);
 		pthread_mutex_unlock(&philo->common_structure.mutex);
 	}
+}
+
+void	can_start(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->common_structure.mutex);
+	philo->common_structure.thred_sign = 1;
+	pthread_mutex_unlock(&philo->common_structure.mutex);
 }

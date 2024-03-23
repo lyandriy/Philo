@@ -6,7 +6,7 @@
 /*   By: lyandriy <lyandriy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 18:17:04 by lyandriy          #+#    #+#             */
-/*   Updated: 2023/10/20 17:24:54 by lyandriy         ###   ########.fr       */
+/*   Updated: 2023/10/27 20:10:41 by lyandriy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@ typedef struct s_dead
 	int			death_sign;
 	int			philosopher_eat;
 	int			numb_philo;
+	int			odd_or_pair;
 	uint64_t	time_die;
 	t_mutex		mutex_print;
 	t_mutex		eat;
+	t_mutex		odd;
 	t_mutex		mutex;
 }	t_dead;
 
@@ -73,7 +75,7 @@ void	ft_philo(t_philo *philo);
 void	check_thred(t_philo *philo);
 int		assign_value(t_philo *philo, char **argv, int argc);
 int		init(t_philo *philo);
-int		check_return(int retur, t_philo *philo);
+int		check_return(int retur);
 void	fill_needle(t_philo *philo);
 void	get_time(uint64_t *timer);
 void	*start_routine(void *needle_original);
@@ -85,5 +87,6 @@ void	ft_destroy(t_philo *philo);
 void	print(t_needle *needle, char *str);
 void	ft_lunch(t_needle *needle);
 void	free_fork(t_needle *needle);
+void	can_start(t_philo *philo);
 
 #endif
